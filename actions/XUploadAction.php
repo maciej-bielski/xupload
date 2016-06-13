@@ -169,6 +169,8 @@ class XUploadAction extends CAction {
             $this->_subfolder = Yii::app( )->request->getQuery( $this->subfolderVar, date( "mdY" ) );
         } else if( $this->subfolderVar !== false ) {
             $this->_subfolder = date( "mdY" );
+        } else if (isset($_GET['subfolder'])) {
+            $this->_subfolder = $_GET['subfolder'];
         }
 
         if( !isset($this->_formModel)) {
@@ -208,19 +210,19 @@ class XUploadAction extends CAction {
     {
         if (isset($_GET["_method"]) && $_GET["_method"] == "delete") {
             $success = false;
-            if ($_GET["file"][0] !== '.' && Yii::app()->user->hasState($this->stateVariable)) {
+//            if ($_GET["file"][0] !== '.' && Yii::app()->user->hasState($this->stateVariable)) {
                 // pull our userFiles array out of state and only allow them to delete
                 // files from within that array
-                $userFiles = Yii::app()->user->getState($this->stateVariable, array());
-
-                if ($this->fileExists($userFiles[$_GET["file"]])) {
-                    $success = $this->deleteFile($userFiles[$_GET["file"]]);
-                    if ($success) {
-                        unset($userFiles[$_GET["file"]]); // remove it from our session and save that info
-                        Yii::app()->user->setState($this->stateVariable, $userFiles);
-                    }
+                //$userFiles = Yii::app()->user->getState($this->stateVariable, array());
+                $file = Yii::app()->basePath . '/../images/' . implode(DIRECTORY_SEPARATOR, array($_GET['controller'], $_GET['id'], $_GET['file']));
+                if ($this->fileExists(array('path' => $file))) {
+                    $success = $this->deleteFile(array('path' => $file));
+//                    if ($success) {
+//                        unset($userFiles[$_GET["file"]]); // remove it from our session and save that info
+//                        Yii::app()->user->setState($this->stateVariable, $userFiles);
+//                    }
                 }
-            }
+//            }
             echo json_encode($success);
             return true;
         }

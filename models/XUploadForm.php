@@ -6,6 +6,8 @@ class XUploadForm extends CFormModel
         public $size;
         public $name;
         public $filename;
+        public $searchFilesPath;
+        public $urlPrefix;
 
         /**
          * @var boolean dictates whether to use sha1 to hash the file names
@@ -78,4 +80,11 @@ class XUploadForm extends CFormModel
 
             return parent::beforeValidate();
         }
+
+    public function getAllFiles() {
+        if (!file_exists($this->searchFilesPath)) {
+            return array();
+        }
+        return scandir($this->searchFilesPath);
+    }
 }
